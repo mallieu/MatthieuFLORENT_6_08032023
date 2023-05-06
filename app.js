@@ -24,7 +24,19 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(helmet()); // Protect from some well-known web vulnerabilities by setting HTTP headers appropriately.
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", 'http://localhost:3000'],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  })
+);
+
 
 app.use(express.json()); // Intercepte les requetes JSON de req.body
 
