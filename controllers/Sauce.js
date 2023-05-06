@@ -28,8 +28,6 @@ exports.createSauce = async (req, res) => {
                 message: "La validation a échouée",
             });
         }
-        sauce.stringifyingObject();
-
         await sauce.save(); // Enregistre la sauce dans mongoDB
         return res.status(201).json({
             message: "Sauce ajoutée !",
@@ -58,11 +56,11 @@ exports.modifySauce = async (req, res) => {
             });
         }
         const sauceFileName = sauce.imageUrl.split("/images/")[1];
-
         // Gère la modification avec ou sans image
+        // A noter que le format de la requete est différent suivant le cas (JSON ou string) 
         let sauceObject = isFileUploaded
             ? {
-                  ...req.body,
+                ...JSON.parse(req.body.sauce),
                   imageUrl: `${req.protocol}://${req.get("host")}/images/${
                       req.file.filename
                   }`,
@@ -71,13 +69,12 @@ exports.modifySauce = async (req, res) => {
                   ...req.body,
               };
 
-        sauceObject.heat = parseInt(req.body.heat); // Garantit typeof Number
+        sauceObject.heat = parseInt(sauceObject.heat); // Garantit typeof Number
         delete sauceObject._userId; // Évite la génération d'un nouvel ID
         const sauceObjectPrototype = {
             ...sauce._doc, // Enlève les propriétés liées à mongoDB
             ...sauceObject,
         };
-
         const validation = await requestValidation(sauce, sauceObjectPrototype);
         if (isFileUploaded && !validation) {
             // Supprime l'image générée en cas d'erreur de validation
