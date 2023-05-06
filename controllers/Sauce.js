@@ -57,10 +57,10 @@ exports.modifySauce = async (req, res) => {
         }
         const sauceFileName = sauce.imageUrl.split("/images/")[1];
         // Gère la modification avec ou sans image
-        // A noter que le format de la requete est différent suivant le cas (JSON ou string) 
+        // A noter que le format de la requete est différent suivant le cas (JSON ou string)
         let sauceObject = isFileUploaded
             ? {
-                ...JSON.parse(req.body.sauce),
+                  ...JSON.parse(req.body.sauce),
                   imageUrl: `${req.protocol}://${req.get("host")}/images/${
                       req.file.filename
                   }`,
