@@ -24,16 +24,19 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(helmet({
-  contentSecurityPolicy: {
+app.use(
+  helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", 'trusted-cdn.com'],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", 'http://localhost:3000'],
       objectSrc: ["'none'"],
       upgradeInsecureRequests: [],
     },
-  },
-}));
+  })
+);
+
 
 app.use(express.json()); // Intercepte les requetes JSON de req.body
 
