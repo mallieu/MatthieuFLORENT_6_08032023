@@ -49,6 +49,8 @@ const compareFields = async (actualObject, futureObject, schemaFieldsTypes) => {
     // Tableaux récoltant les erreurs de champs potentielles
     const missingFields = [];
     const wrongTypeof = [];
+    const validationErrors = [];
+
     for (const field in schemaFieldsTypes) {
         // Gère les différences entre array (mongoose) et object (JS)
         schemaFieldsTypesValues[schemaKeys.indexOf(field)] === "array"
@@ -76,13 +78,16 @@ const compareFields = async (actualObject, futureObject, schemaFieldsTypes) => {
             }
         }
         // Vérifie le contenu de chaque élément selon son typeof
-        inputValidation(typeof futureObject[field], futureObject[field]);        
+        const fieldErrors = inputValidation(typeof futureObject[field], futureObject[field]);     
+        if (fieldErrors.length > 0) {
+            validationErrors.push(fieldErrors);
+          }   
     }
     // En cas d'erreur, les erreurs sont réparties dans ces tableaux
-    if (wrongTypeof.length > 0) {
-        return false;
-    }
-    if (missingFields.length > 0) {
+    if (wrongTypeof.length > 0 || missingFields.length > 0 || validationErrors.length > 0) {
+        console.log(wrongTypeof)
+        console.log(missingFields)        
+        console.log(validationErrors)
         return false;
     }
     // Validation des valeurs attendues
